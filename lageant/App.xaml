@@ -1,0 +1,15 @@
+﻿<Application xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lageant="clr-namespace:lageant"
+             x:Class="lageant.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <lageant:LageantBootstraper x:Key="Bootstrapper"/>
+                </ResourceDictionary>
+                <ResourceDictionary Source="/lageant;component/ResourceDictionaries/ResourceLibrary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

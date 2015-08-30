@@ -1,0 +1,345 @@
+﻿<UserControl x:Class="lageant.Views.MainView" x:Name="MainUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:models="clr-namespace:lageant.Models"
+             xmlns:viewModels="clr-namespace:lageant.ViewModels"
+             xmlns:converter="clr-namespace:lageant.Converter"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:utils="clr-namespace:lageant.Utils"
+             d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel, IsDesignTimeCreatable=True}"
+             cal:Bind.AtDesignTime="True"
+             mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converter:BytesToHexConverter x:Key="BytesToHexConverter" />
+            <converter:KeyTypeToIconConverter x:Key="KeyTypeToIconConverter" />
+            <converter:BoolToEnabledConverter x:Key="BoolToEnabledConverter" />
+            <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Background="#198AB328">
+        <Border BorderThickness="1" Grid.Row="0" Grid.Column="0" Background="#198AB328" Margin="10"
+                Padding="10">
+            <Border.BorderBrush>
+                <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile" Opacity="0.4">
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <GeometryDrawing Brush="#FF8ab329">
+                                <GeometryDrawing.Geometry>
+                                    <GeometryGroup>
+                                        <RectangleGeometry Rect="0,0,50,50" />
+                                        <RectangleGeometry Rect="50,50,50,50" />
+                                    </GeometryGroup>
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Border.BorderBrush>
+
+            <controls:MetroTabControl>
+                <TabItem Padding="10,2,10,2" Height="39" VerticalAlignment="Top">
+                    <TabItem.Header>
+                        Keystore
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <StackPanel Orientation="Vertical" Margin="0,10,0,0">
+                            <TextBlock TextWrapping="Wrap" Foreground="#FF575757" FontSize="18" Margin="10,0,0,0">
+                                The keystore is a memory mapped file, which holds your libsodium keys.
+                            </TextBlock>
+                            <models:KeyListView Margin="0,10,0,0"
+                                                VirtualizingStackPanel.IsVirtualizing="True"
+                                                VirtualizingPanel.VirtualizationMode="Recycling"
+                                                ScrollViewer.IsDeferredScrollingEnabled="False"
+                                                ScrollViewer.CanContentScroll="True"
+                                                ScrollViewer.VerticalScrollBarVisibility="Auto"
+
+                                                Height="240"
+                                                SelectionMode="Single"
+                                                SelectedItem="{Binding SelectedKey, Mode=TwoWay}"
+                                                ItemsSource="{Binding Keys.View}" FontSize="16" Background="#198AB328"
+                                                Foreground="#FF575757">
+                                <models:KeyListView.BorderBrush>
+                                    <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile"
+                                                  Opacity="0.4">
+                                        <DrawingBrush.Drawing>
+                                            <DrawingGroup>
+                                                <GeometryDrawing Brush="#FF8ab329">
+                                                    <GeometryDrawing.Geometry>
+                                                        <GeometryGroup>
+                                                            <RectangleGeometry Rect="0,0,50,50" />
+                                                            <RectangleGeometry Rect="50,50,50,50" />
+                                                        </GeometryGroup>
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingBrush.Drawing>
+                                    </DrawingBrush>
+                                </models:KeyListView.BorderBrush>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type models:KeyListViewItem}"
+                                           BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                        <Setter Property="Height" Value="40" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <models:KeyListView.View>
+                                    <GridView>
+                                        <GridViewColumn Width="40" Header="Typ">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Image
+                                                        Source="{Binding KeyType, Converter={StaticResource KeyTypeToIconConverter}}"
+                                                        Width="16" Height="16" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Width="120" Header="Key Id">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock FontSize="10">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding
+                                                                Converter="{StaticResource BytesToHexConverter}">
+                                                                <Binding Path="KeyId" />
+                                                                <Binding>
+                                                                    <Binding.Source>
+                                                                        <system:String>id</system:String>
+                                                                    </Binding.Source>
+                                                                </Binding>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Width="Auto" Header="Key Data">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Vertical">
+                                                        <TextBlock FontSize="10">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding
+                                                                    Converter="{StaticResource BytesToHexConverter}">
+                                                                    <Binding Path="PrivateKey" />
+                                                                    <Binding>
+                                                                        <Binding.Source>
+                                                                            <system:String>private</system:String>
+                                                                        </Binding.Source>
+                                                                    </Binding>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                        <TextBlock FontSize="10">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding
+                                                                    Converter="{StaticResource BytesToHexConverter}">
+                                                                    <Binding Path="PublicKey" />
+                                                                    <Binding>
+                                                                        <Binding.Source>
+                                                                            <system:String>public</system:String>
+                                                                        </Binding.Source>
+                                                                    </Binding>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </models:KeyListView.View>
+                            </models:KeyListView>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
+                                <StackPanel Orientation="Vertical">
+                                    <controls:MetroProgressBar IsIndeterminate="True"
+                                                               Visibility="{Binding IsWorking, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                               Width="300"
+                                                               Foreground="{DynamicResource AccentColorBrush}"
+                                                               Margin="0,10,10,0" />
+                                    <TextBlock Text="{Binding MainViewError}" FontWeight="Bold" FontSize="18"
+                                               Foreground="Red" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                                               Margin="0,0,0,0" />
+                                </StackPanel>
+                                <Button
+                                    IsEnabled="{Binding IsWorking, Converter={StaticResource BoolToEnabledConverter}}"
+                                    ToolTip="Calculate a key" x:Name="CalculateKey"
+                                    HorizontalAlignment="Left" Margin="5,0,0,0" Height="46" VerticalAlignment="Top"
+                                    Width="46" Cursor="Hand" Style="{DynamicResource MetroCircleButtonStyle}"
+                                    Background="#FFFFFFFF">
+                                    <Rectangle Fill="#FF8ab329" Width="20" Height="20">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Visual="{DynamicResource appbar_calculator}" Stretch="Uniform" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </Button>
+                                <Button
+                                    IsEnabled="{Binding IsWorking, Converter={StaticResource BoolToEnabledConverter}}"
+                                    ToolTip="Generate a new random key" x:Name="GenerateNewRandomKey"
+                                    HorizontalAlignment="Left" Margin="5,0,0,0" Height="46" VerticalAlignment="Top"
+                                    Width="46" Cursor="Hand" Style="{DynamicResource MetroCircleButtonStyle}"
+                                    Background="#FFFFFFFF">
+                                    <Rectangle Fill="#FF8ab329" Width="20" Height="20">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Visual="{DynamicResource appbar_page_add}" Stretch="Uniform" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </Button>
+                                <Button ToolTip="Remove the selected key from keystore" x:Name="RemoveKeyFromKeystore"
+                                        HorizontalAlignment="Left" Margin="5,0,0,0" Height="46" VerticalAlignment="Top"
+                                        Width="46" Cursor="Hand" Style="{DynamicResource MetroCircleButtonStyle}"
+                                        Background="#FFFFFFFF">
+                                    <Rectangle Fill="#FF8ab329" Width="20" Height="20">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Visual="{DynamicResource appbar_page_delete}"
+                                                         Stretch="Uniform" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </Button>
+                                <Button ToolTip="Copy the selected key into clipboard" x:Name="CopyKeyToClipboard"
+                                        HorizontalAlignment="Left" Margin="5,0,0,0" Height="46" VerticalAlignment="Top"
+                                        Width="46" Cursor="Hand" Style="{DynamicResource MetroCircleButtonStyle}"
+                                        Background="#FFFFFFFF">
+                                    <Rectangle Fill="#FF8ab329" Width="20" Height="20">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Visual="{DynamicResource appbar_page_multiple}"
+                                                         Stretch="Uniform" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </Button>
+                                <Button ToolTip="Export the selected key into a file" x:Name="ExportKeyToFile"
+                                        IsEnabled="{Binding IsWorking, Converter={StaticResource BoolToEnabledConverter}}"
+                                        HorizontalAlignment="Left" Margin="5,0,0,0" Height="46" VerticalAlignment="Top"
+                                        Width="46" Cursor="Hand" Style="{DynamicResource MetroCircleButtonStyle}"
+                                        Background="#FFFFFFFF">
+                                    <Rectangle Fill="#FF8ab329" Width="20" Height="20">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Visual="{DynamicResource appbar_page_download}"
+                                                         Stretch="Uniform" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </Button>
+                                <Button ToolTip="Load an existing key" x:Name="LoadKeyIntoKeystore"
+                                        IsEnabled="{Binding IsWorking, Converter={StaticResource BoolToEnabledConverter}}"
+                                        HorizontalAlignment="Left" Margin="5,0,0,0" Height="46" VerticalAlignment="Top"
+                                        Width="46" Cursor="Hand" Style="{DynamicResource MetroCircleButtonStyle}"
+                                        Background="#FFFFFFFF">
+                                    <Rectangle Fill="#FF8ab329" Width="20" Height="20">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Visual="{DynamicResource appbar_page_upload}"
+                                                         Stretch="Uniform" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </Button>
+                                <Button ToolTip="Load an existing minisign key" x:Name="LoadMinisignKeyIntoKeystore"
+                                        IsEnabled="{Binding IsWorking, Converter={StaticResource BoolToEnabledConverter}}"
+                                        HorizontalAlignment="Left" Margin="5,0,0,0" Height="46" VerticalAlignment="Top"
+                                        Width="46" Cursor="Hand" Style="{DynamicResource MetroCircleButtonStyle}"
+                                        Background="#FFFFFFFF">
+                                    <Rectangle Fill="#FF8ab329" Width="20" Height="20">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Visual="{DynamicResource appbar_vector_pen_add}"
+                                                         Stretch="Uniform" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+                <TabItem Padding="10,2,10,2">
+                    <TabItem.Header>
+                        About
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <Border BorderThickness="1" Background="#198AB328" Margin="10"
+                                    Padding="10">
+                                <Border.BorderBrush>
+                                    <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile"
+                                                  Opacity="0.4">
+                                        <DrawingBrush.Drawing>
+                                            <DrawingGroup>
+                                                <GeometryDrawing Brush="#FF8ab329">
+                                                    <GeometryDrawing.Geometry>
+                                                        <GeometryGroup>
+                                                            <RectangleGeometry Rect="0,0,50,50" />
+                                                            <RectangleGeometry Rect="50,50,50,50" />
+                                                        </GeometryGroup>
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingBrush.Drawing>
+                                    </DrawingBrush>
+                                </Border.BorderBrush>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock FontSize="20" Foreground="#FF8ab329">License</TextBlock>
+                                    <TextBlock FontSize="10" Foreground="#FF575757" Margin="0,10,0,0" Width="450"
+                                               TextWrapping="Wrap">
+                                        The MIT License (MIT)
+                                        <LineBreak />
+                                        <LineBreak />
+                                        Copyright (c) 2015 Christian Hermann &amp; Contributors
+                                        <LineBreak />
+                                        <LineBreak />
+                                        Permission is hereby granted, free of charge, to any person obtaining a copy
+                                        of this software and associated documentation files (the "Software"), to deal
+                                        in the Software without restriction, including without limitation the rights
+                                        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                                        copies of the Software, and to permit persons to whom the Software is
+                                        furnished to do so, subject to the following conditions:
+                                        <LineBreak />
+                                        <LineBreak />
+                                        The above copyright notice and this permission notice shall be included in all
+                                        copies or substantial portions of the Software.
+                                        <LineBreak />
+                                        <LineBreak />
+                                        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                                        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                                        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                                        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                                        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                                        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                                        SOFTWARE.
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+
+                            <Border BorderThickness="1" Background="#198AB328" Margin="10"
+                                    HorizontalAlignment="Stretch"
+                                    Padding="10">
+                                <Border.BorderBrush>
+                                    <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile"
+                                                  Opacity="0.4">
+                                        <DrawingBrush.Drawing>
+                                            <DrawingGroup>
+                                                <GeometryDrawing Brush="#FF8ab329">
+                                                    <GeometryDrawing.Geometry>
+                                                        <GeometryGroup>
+                                                            <RectangleGeometry Rect="0,0,50,50" />
+                                                            <RectangleGeometry Rect="50,50,50,50" />
+                                                        </GeometryGroup>
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingBrush.Drawing>
+                                    </DrawingBrush>
+                                </Border.BorderBrush>
+                                <StackPanel Width="240">
+                                    <TextBlock FontSize="20" Foreground="#FF8ab329">List of used Libraries</TextBlock>
+                                    <TextBlock FontSize="10" Foreground="#FF575757"
+                                               utils:NavigationService.Text="Project Site&#x0a;https://github.com/bitbeans/lageant&#x0a;&#x0a;Caliburn.Micro&#x0a;https://github.com/Caliburn-Micro/Caliburn.Micro&#x0a;MahApps.Metro&#x0a;https://github.com/MahApps/MahApps.Metro&#x0a;protobuf-net&#x0a;https://github.com/mgravell/protobuf-net&#x0a;helper-net&#x0a;https://github.com/bitbeans/helper-net&#x0a;NaclKeys&#x0a;https://github.com/bitbeans/NaclKeys&#x0a;libsodium-net&#x0a;https://github.com/adamcaudill/libsodium-net&#x0a;minisign-net&#x0a;https://github.com/bitbeans/minisign-net"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+            </controls:MetroTabControl>
+        </Border>
+    </Grid>
+</UserControl>
+ 
