@@ -10,6 +10,5 @@ namespace lageant.core
         void RemoveKey(Key key);
         bool OpenClient();
         void Dispose();
-       
     }
 }
