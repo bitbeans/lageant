@@ -14,6 +14,7 @@
 - Generate libsodium keys by input (bytejail, CurveLock, miniLock)
 - Load minisign private keys
 - Generate random keys 
+- Copy keys to clipboard
 - Import generated keys (.lkey)
 - Export generated keys (.lkey)
 
