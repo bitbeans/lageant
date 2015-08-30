@@ -10,6 +10,13 @@
 
 **There will be bugs. May change. May break.**
 
+### Scope
+- Generate libsodium keys by input (bytejail, CurveLock, miniLock)
+- Load minisign private keys
+- Generate random keys 
+- Import generated keys (.lkey)
+- Export generated keys (.lkey)
+
 ### Client Example 
 
 
