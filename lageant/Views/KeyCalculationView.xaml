@@ -101,7 +101,7 @@
                     </Rectangle>
                 </Button>
                 <TextBlock Text="{Binding CalculationError}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"
-                           HorizontalAlignment="Center" Foreground="Red" />
+                           HorizontalAlignment="Center" Foreground="#FFBB0B0B" />
             </StackPanel>
         </Border>
     </Grid>

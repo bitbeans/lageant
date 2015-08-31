@@ -19,5 +19,8 @@ namespace lageant.client.Models
 
         [ProtoMember(5)]
         public byte[] KeySalt { get; set; }
+
+        [ProtoMember(6)]
+        public byte[] KeyNonce { get; set; }
     }
 }

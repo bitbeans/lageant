@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Navigation;
@@ -31,6 +32,7 @@ namespace lageant
             else
             {
                 var window = GetExistingWindow(rootModel);
+
                 if (window == null)
                 {
                     window = CreateWindow(rootModel, false, context, settings);
@@ -39,10 +41,12 @@ namespace lageant
                 }
                 else
                 {
+                    window.Activate();
                     window.Focus();
                 }
             }
         }
+
 
         protected virtual Window GetExistingWindow(object model)
         {
@@ -74,6 +78,8 @@ namespace lageant
                         ResizeMode = ResizeMode.NoResize,
                         SizeToContent = SizeToContent.Manual
                     };
+                    window.Closing += WindowOnClosing;
+                    window.Activated += Window_Activated;
                 }
                 window.SetValue(View.IsGeneratedProperty, true);
             }
@@ -86,6 +92,26 @@ namespace lageant
                 }
             }
             return window;
+        }
+
+        private static void Window_Activated(object sender, EventArgs e)
+        {
+            var window = sender as Window;
+            if (window != null)
+            {
+                // open from tray
+                window.Show();
+            }
+        }
+
+        private static void WindowOnClosing(object sender, CancelEventArgs cancelEventArgs)
+        {
+            var window = sender as Window;
+            if (window != null)
+            {
+                // hide to tray
+                window.Hide();
+            }
         }
     }
 }

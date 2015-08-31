@@ -8,6 +8,6 @@
         Title="Lageant" MinWidth="800" Width="800" Height="450" SizeToContent="WidthAndHeight"
         MinHeight="450" GlowBrush="{DynamicResource AccentColorBrush}" 
         Icon="../Images/libsodium.ico" ShowIconOnTitleBar="True" 
-        WindowStartupLocation="CenterScreen" TitleCaps="False" Topmost="False" ShowMaxRestoreButton="False" ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen" TitleCaps="False" Topmost="False" ShowMaxRestoreButton="False" ResizeMode="NoResize" ShowInTaskbar="False" ShowMinButton="True"
         mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" cal:Message.Attach="[Event Closing] = [Action OnClose($eventArgs)]">
 </controls:MetroWindow>

@@ -3,21 +3,17 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Dynamic;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using Caliburn.Micro;
-using Helper;
 using lageant.core;
 using lageant.core.Models;
 using lageant.Utils;
 using minisign;
 using Microsoft.Win32;
-using NaclKeys;
-using NaclKeys.Helper;
 using ProtoBuf;
 using Sodium;
 
@@ -29,10 +25,10 @@ namespace lageant.ViewModels
         private readonly BindableCollection<Key> _keys = new BindableCollection<Key>();
         private readonly ILageantCore _lageantCore;
         private readonly IWindowManager _windowManager;
-
         private bool _isWorking;
         private string _mainViewError;
         private Key _selectedKey;
+        private string _userPassword;
 
         /// <summary>
         ///     MainViewModel construcor on start up.
@@ -113,9 +109,43 @@ namespace lageant.ViewModels
             }
         }
 
+        /// <summary>
+        ///     The user password.
+        /// </summary>
+        public string UserPassword
+        {
+            get { return _userPassword; }
+            set
+            {
+                if (value.Equals(_userPassword)) return;
+                _userPassword = value;
+                NotifyOfPropertyChange(() => UserPassword);
+            }
+        }
+
+        /// <summary>
+        ///     Prevent closing the application.
+        /// </summary>
+        /// <param name="e"></param>
         public void OnClose(CancelEventArgs e)
         {
-            e.Cancel = false;
+            e.Cancel = true;
+        }
+
+        /// <summary>
+        ///     Method to show the window again (from tray).
+        /// </summary>
+        public void ShowWindow()
+        {
+            _windowManager.ShowWindow(this);
+        }
+
+        /// <summary>
+        ///     Shutdown lageant.
+        /// </summary>
+        public void CloseWindow()
+        {
+            Application.Current.Shutdown();
         }
 
         public void GenerateNewRandomKey()
@@ -135,6 +165,9 @@ namespace lageant.ViewModels
             }
         }
 
+        /// <summary>
+        ///     Store/Export a key to file.
+        /// </summary>
         public async void ExportKeyToFile()
         {
             MainViewError = string.Empty;
@@ -142,7 +175,15 @@ namespace lageant.ViewModels
             string password;
             if (SelectedKey != null)
             {
-                var selectedKey = SelectedKey;
+                var exportKey = new Key
+                {
+                    PublicKey = SelectedKey.PublicKey,
+                    PrivateKey = SelectedKey.PrivateKey,
+                    KeyNonce = SelectedKey.KeyNonce,
+                    KeyId = SelectedKey.KeyId,
+                    KeySalt = SelectedKey.KeySalt,
+                    KeyType = SelectedKey.KeyType
+                };
                 var saveFileDialog = new SaveFileDialog
                 {
                     OverwritePrompt = true,
@@ -150,9 +191,9 @@ namespace lageant.ViewModels
                     DefaultExt = ".lkey"
                 };
 
-                if (selectedKey.KeyId != null)
+                if (exportKey.KeyId != null)
                 {
-                    saveFileDialog.FileName = Utilities.BinaryToHex(selectedKey.KeyId);
+                    saveFileDialog.FileName = Utilities.BinaryToHex(exportKey.KeyId);
                 }
                 var result = saveFileDialog.ShowDialog();
                 if (result == true)
@@ -170,9 +211,13 @@ namespace lageant.ViewModels
                             password = win.UserPassword;
                             if (!string.IsNullOrEmpty(password))
                             {
-                                if (selectedKey.KeySalt == null)
+                                if (exportKey.KeySalt == null)
                                 {
-                                    selectedKey.KeySalt = SodiumCore.GetRandomBytes(32);
+                                    exportKey.KeySalt = SodiumCore.GetRandomBytes(32);
+                                }
+                                if (exportKey.KeyNonce == null)
+                                {
+                                    exportKey.KeyNonce = PublicKeyBox.GenerateNonce();
                                 }
                                 var encryptionKey = await Task.Run(() =>
                                 {
@@ -180,7 +225,7 @@ namespace lageant.ViewModels
                                     try
                                     {
                                         tmpKey = PasswordHash.ScryptHashBinary(Encoding.UTF8.GetBytes(password),
-                                            selectedKey.KeySalt, PasswordHash.Strength.MediumSlow, 32);
+                                            exportKey.KeySalt, PasswordHash.Strength.MediumSlow, 32);
                                     }
                                     catch (OutOfMemoryException)
                                     {
@@ -193,11 +238,20 @@ namespace lageant.ViewModels
                                     return tmpKey;
                                 }).ConfigureAwait(true);
 
-                                selectedKey.PrivateKey = CryptoHelper.Xor(selectedKey.PrivateKey, encryptionKey);
-                                using (var keyFileStream = File.OpenWrite(filename))
+                                if (encryptionKey != null)
                                 {
-                                    Serializer.SerializeWithLengthPrefix(keyFileStream, selectedKey, PrefixStyle.Base128,
-                                        0);
+                                    exportKey.PrivateKey = SecretBox.Create(exportKey.PrivateKey, exportKey.KeyNonce,
+                                        encryptionKey);
+                                    using (var keyFileStream = File.OpenWrite(filename))
+                                    {
+                                        Serializer.SerializeWithLengthPrefix(keyFileStream, exportKey,
+                                            PrefixStyle.Base128,
+                                            0);
+                                    }
+                                }
+                                else
+                                {
+                                    MainViewError = "Could not export key (missing encryption key?)";
                                 }
                             }
                             else
@@ -219,6 +273,9 @@ namespace lageant.ViewModels
             IsWorking = false;
         }
 
+        /// <summary>
+        ///     Load/Import a key from a file.
+        /// </summary>
         public async void LoadKeyIntoKeystore()
         {
             MainViewError = string.Empty;
@@ -252,30 +309,52 @@ namespace lageant.ViewModels
                                 key = Serializer.DeserializeWithLengthPrefix<Key>(keyFileStream, PrefixStyle.Base128, 0);
                             }
 
-                            var decryptionKey = await Task.Run(() =>
-                            {
-                                var tmpKey = new byte[32];
-                                try
-                                {
-                                    tmpKey =
-                                        PasswordHash.ScryptHashBinary(Encoding.UTF8.GetBytes(password),
-                                            key.KeySalt, PasswordHash.Strength.MediumSlow, 32);
-                                }
-                                catch (OutOfMemoryException)
-                                {
-                                    MainViewError = "Could not load key (out of memory).";
-                                }
-                                catch (Exception)
-                                {
-                                    MainViewError = "Could not load key (failure)";
-                                }
-                                return tmpKey;
-                            }).ConfigureAwait(true);
-
-                            key.PrivateKey = CryptoHelper.Xor(key.PrivateKey, decryptionKey);
                             if (key != null)
                             {
-                                AddKey(key);
+                                var decryptionKey = await Task.Run(() =>
+                                {
+                                    var tmpKey = new byte[32];
+                                    try
+                                    {
+                                        tmpKey =
+                                            PasswordHash.ScryptHashBinary(Encoding.UTF8.GetBytes(password),
+                                                key.KeySalt, PasswordHash.Strength.MediumSlow, 32);
+                                    }
+                                    catch (OutOfMemoryException)
+                                    {
+                                        MainViewError = "Could not load key (out of memory).";
+                                    }
+                                    catch (Exception)
+                                    {
+                                        MainViewError = "Could not load key (failure)";
+                                    }
+                                    return tmpKey;
+                                }).ConfigureAwait(true);
+
+                                if (decryptionKey != null)
+                                {
+                                    key.PrivateKey = SecretBox.Open(key.PrivateKey,
+                                        key.KeyNonce, decryptionKey);
+                                    // check if the key pair matches
+                                    if (
+                                        PublicKeyBox.GenerateKeyPair(key.PrivateKey)
+                                            .PublicKey.SequenceEqual(key.PublicKey))
+                                    {
+                                        AddKey(key);
+                                    }
+                                    else
+                                    {
+                                        MainViewError = "Could not load key (wrong password?)";
+                                    }
+                                }
+                                else
+                                {
+                                    MainViewError = "Could not load key (missing decryption key)";
+                                }
+                            }
+                            else
+                            {
+                                MainViewError = "Could not load key (maybe not a lkey?)";
                             }
                         }
                         else
@@ -288,19 +367,20 @@ namespace lageant.ViewModels
                         MainViewError = "Could not load key (missing password)";
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    MainViewError = "Could not load key (exception)";
                 }
             }
             IsWorking = false;
         }
 
         /// <summary>
-        /// Open the key calculation dialog.
+        ///     Open the key calculation dialog.
         /// </summary>
         public void CalculateKey()
         {
-            var win = new KeyCalculationViewModel{DisplayName = "Calculate a new key"};
+            var win = new KeyCalculationViewModel {DisplayName = "Calculate a new key"};
             dynamic settings = new ExpandoObject();
             settings.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             settings.Owner = GetView();
@@ -432,32 +512,24 @@ namespace lageant.ViewModels
             return key;
         }
 
+        /// <summary>
+        ///     Add a key to the store and the listview.
+        /// </summary>
+        /// <param name="key">The key to add.</param>
         private void AddKey(Key key)
         {
             _lageantCore.AddKey(key);
             _keys.Add(key);
         }
 
+        /// <summary>
+        ///     Remove a key from the store and the listview.
+        /// </summary>
+        /// <param name="key">The key to remove.</param>
         private void RemoveKey(Key key)
         {
             _lageantCore.RemoveKey(key);
             _keys.Remove(key);
-        }
-
-
-        private string _userPassword;
-        /// <summary>
-        ///     The user password.
-        /// </summary>
-        public string UserPassword
-        {
-            get { return _userPassword; }
-            set
-            {
-                if (value.Equals(_userPassword)) return;
-                _userPassword = value;
-                NotifyOfPropertyChange(() => UserPassword);
-            }
         }
     }
 }

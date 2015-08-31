@@ -7,15 +7,7 @@ namespace lageant.client.Models
     [ProtoContract(SkipConstructor = true)]
     public class Keystore
     {
-        public Keystore()
-        {
-            Initialized = true;
-        }
-
         [ProtoMember(1)]
-        public bool Initialized { get; set; }
-
-        [ProtoMember(2)]
         public List<Key> Keys { get; set; }
 
         public Key GetKeyById(byte[] id)
