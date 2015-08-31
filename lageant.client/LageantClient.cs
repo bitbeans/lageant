@@ -7,7 +7,7 @@ using ProtoBuf;
 
 namespace lageant.client
 {
-    public class LageantClient : ILageantClient
+    public sealed class LageantClient : ILageantClient
     {
         private const string LageantLock = "LAGEANT_LOCK";
 
@@ -18,15 +18,18 @@ namespace lageant.client
         private MemoryMappedFile _memoryMappedFile;
         private MemoryMappedViewAccessor _reader;
 
+        /// <summary>
+        ///     Initialize a new client and connect to the lageant keystore.
+        /// </summary>
         public LageantClient()
         {
             _smKeyStoreName = "lageant";
             _smKeyStoreSize = 1024*1024;
-            Connect();
+            //Connect();
         }
 
         /// <summary>
-        ///     Read and write from/to the Keystore.
+        ///     Read the Keystore.
         /// </summary>
         public Keystore Keystore
         {
@@ -50,6 +53,9 @@ namespace lageant.client
             }
         }
 
+        /// <summary>
+        ///     Dispose the client.
+        /// </summary>
         public void Dispose()
         {
             _reader?.Dispose();
@@ -57,6 +63,10 @@ namespace lageant.client
             _keystoreLock?.Close();
         }
 
+        /// <summary>
+        ///     Connect to the lageant keystore.
+        /// </summary>
+        /// <returns><c>true</c> on success, otherwise <c>false</c></returns>
         public bool Connect()
         {
             try

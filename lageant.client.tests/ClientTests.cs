@@ -10,12 +10,12 @@ namespace lageant.client.tests
         /// <summary>
         ///     Convert hex into byte array.
         /// </summary>
-        /// <param name="hex"></param>
-        /// <returns></returns>
-        public static byte[] StringToByteArray(string hex)
+        /// <param name="hex">A valid hex string.</param>
+        /// <returns>A byte array.</returns>
+        private static byte[] ConvertToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)
-                .Where(x => x%2 == 0)
+                .Where(x => x % 2 == 0)
                 .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                 .ToArray();
         }
@@ -25,9 +25,12 @@ namespace lageant.client.tests
         {
             var client = new LageantClient();
             if (!client.Connect()) return;
-            var key = client.Keystore.GetKeyById(StringToByteArray("817618db3eafb76b"));
+            var key = client.Keystore.GetKeyById("5b6d0ce1bf4ed9c5");
 
-            Assert.AreEqual(StringToByteArray("cb9e100f267e13817df835793148ee4fe98df78a620929b800ea8fdbea80990f"),
+            var keyStore = client.Keystore;
+            Console.WriteLine(keyStore.Keys.Count);
+
+            Assert.AreEqual(ConvertToByteArray("c3e6725d3cdb2de6c71f6b437980c0db1125bd8d9bc249ccb7cdb9901c6d7c6a"),
                 key.PublicKey);
         }
     }
