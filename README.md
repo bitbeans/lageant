@@ -27,6 +27,6 @@ var client = new LageantClient();
 //connect to memory
 if (!client.Connect()) return;
 //fetch a stored key (hex string)
-var key = client.Keystore.GetKeyById(StringToByteArray("4022a87de0ff0724"));
+var key = client.Keystore.GetKeyById("4022a87de0ff0724");
 
 ```
