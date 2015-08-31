@@ -341,7 +341,7 @@
                                 <StackPanel Width="240">
                                     <TextBlock FontSize="20" Foreground="#FF8ab329">List of used Libraries</TextBlock>
                                     <TextBlock FontSize="10" Foreground="#FF575757"
-                                               utils:NavigationService.Text="Project Site&#x0a;https://github.com/bitbeans/lageant&#x0a;&#x0a;Caliburn.Micro&#x0a;https://github.com/Caliburn-Micro/Caliburn.Micro&#x0a;MahApps.Metro&#x0a;https://github.com/MahApps/MahApps.Metro&#x0a;protobuf-net&#x0a;https://github.com/mgravell/protobuf-net&#x0a;helper-net&#x0a;https://github.com/bitbeans/helper-net&#x0a;NaclKeys&#x0a;https://github.com/bitbeans/NaclKeys&#x0a;libsodium-net&#x0a;https://github.com/adamcaudill/libsodium-net&#x0a;minisign-net&#x0a;https://github.com/bitbeans/minisign-net"
+                                               utils:NavigationService.Text="Project Site&#x0a;https://github.com/bitbeans/lageant&#x0a;&#x0a;Caliburn.Micro&#x0a;https://github.com/Caliburn-Micro/Caliburn.Micro&#x0a;MahApps.Metro&#x0a;https://github.com/MahApps/MahApps.Metro&#x0a;protobuf-net&#x0a;https://github.com/mgravell/protobuf-net&#x0a;helper-net&#x0a;https://github.com/bitbeans/helper-net&#x0a;NaclKeys&#x0a;https://github.com/bitbeans/NaclKeys&#x0a;libsodium-net&#x0a;https://github.com/adamcaudill/libsodium-net&#x0a;minisign-net&#x0a;https://github.com/bitbeans/minisign-net&#x0a;wpf-notifyicon&#x0a;http://www.hardcodet.net/wpf-notifyicon"
                                                TextWrapping="Wrap" />
                                 </StackPanel>
                             </Border>
