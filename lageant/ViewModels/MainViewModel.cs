@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Dynamic;
 using System.IO;
-using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -326,16 +326,14 @@ namespace lageant.ViewModels
 
                                 if (decryptionKey != null)
                                 {
-                                    key.PrivateKey = SecretBox.Open(key.PrivateKey,
-                                        key.KeyNonce, decryptionKey);
-                                    // check if the key pair matches
-                                    if (
-                                        PublicKeyBox.GenerateKeyPair(key.PrivateKey)
-                                            .PublicKey.SequenceEqual(key.PublicKey))
+                                    try
                                     {
+                                        key.PrivateKey = SecretBox.Open(key.PrivateKey,
+                                            key.KeyNonce, decryptionKey);
+                                        // check if the key pair matches
                                         AddKey(key);
                                     }
-                                    else
+                                    catch (CryptographicException)
                                     {
                                         MainViewError = "Could not load key (wrong password?)";
                                     }
@@ -360,7 +358,7 @@ namespace lageant.ViewModels
                         MainViewError = "Could not load key (missing password)";
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     MainViewError = "Could not load key (exception)";
                 }

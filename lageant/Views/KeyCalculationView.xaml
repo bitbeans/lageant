@@ -100,8 +100,8 @@
                         </Rectangle.OpacityMask>
                     </Rectangle>
                 </Button>
-                <TextBlock Text="{Binding CalculationError}" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"
-                           HorizontalAlignment="Center" Foreground="#FFBB0B0B" />
+                <TextBlock Text="{Binding CalculationError}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"
+                           HorizontalAlignment="Center" Foreground="#FFE27021" />
             </StackPanel>
         </Border>
     </Grid>
