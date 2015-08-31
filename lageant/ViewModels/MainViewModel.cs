@@ -179,11 +179,12 @@ namespace lageant.ViewModels
                 {
                     PublicKey = SelectedKey.PublicKey,
                     PrivateKey = SelectedKey.PrivateKey,
-                    KeyNonce = SelectedKey.KeyNonce,
-                    KeyId = SelectedKey.KeyId,
-                    KeySalt = SelectedKey.KeySalt,
-                    KeyType = SelectedKey.KeyType
+                    KeyType = SelectedKey.KeyType,
+                    KeyId = SelectedKey.KeyId ?? null,
+                    KeySalt = SelectedKey.KeySalt ?? PasswordHash.GenerateSalt(),
+                    KeyNonce = SelectedKey.KeyNonce ?? SecretBox.GenerateNonce()
                 };
+
                 var saveFileDialog = new SaveFileDialog
                 {
                     OverwritePrompt = true,
@@ -211,14 +212,6 @@ namespace lageant.ViewModels
                             password = win.UserPassword;
                             if (!string.IsNullOrEmpty(password))
                             {
-                                if (exportKey.KeySalt == null)
-                                {
-                                    exportKey.KeySalt = SodiumCore.GetRandomBytes(32);
-                                }
-                                if (exportKey.KeyNonce == null)
-                                {
-                                    exportKey.KeyNonce = PublicKeyBox.GenerateNonce();
-                                }
                                 var encryptionKey = await Task.Run(() =>
                                 {
                                     var tmpKey = new byte[32];

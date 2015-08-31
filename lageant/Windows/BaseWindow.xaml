@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:cal="http://www.caliburnproject.org"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        Title="Lageant" MinWidth="800" Width="800" Height="450" SizeToContent="WidthAndHeight"
+        Title="Lageant" MinWidth="840" Width="840" Height="450" SizeToContent="WidthAndHeight"
         MinHeight="450" GlowBrush="{DynamicResource AccentColorBrush}" 
         Icon="../Images/libsodium.ico" ShowIconOnTitleBar="True" 
         WindowStartupLocation="CenterScreen" TitleCaps="False" Topmost="False" ShowMaxRestoreButton="False" ResizeMode="NoResize" ShowInTaskbar="False" ShowMinButton="True"

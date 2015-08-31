@@ -67,7 +67,6 @@
                                                 ScrollViewer.IsDeferredScrollingEnabled="False"
                                                 ScrollViewer.CanContentScroll="True"
                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-
                                                 Height="240"
                                                 SelectionMode="Single"
                                                 SelectedItem="{Binding SelectedKey, Mode=TwoWay}"
@@ -107,10 +106,10 @@
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
-                                        <GridViewColumn Width="120" Header="Key Id">
+                                        <GridViewColumn Width="140" Header="Key Id">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock FontSize="10">
+                                                    <TextBlock FontSize="11">
                                                         <TextBlock.Text>
                                                             <MultiBinding
                                                                 Converter="{StaticResource BytesToHexConverter}">
@@ -130,7 +129,7 @@
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Vertical">
-                                                        <TextBlock FontSize="10">
+                                                        <TextBlock FontSize="11">
                                                             <TextBlock.Text>
                                                                 <MultiBinding
                                                                     Converter="{StaticResource BytesToHexConverter}">
@@ -143,7 +142,7 @@
                                                                 </MultiBinding>
                                                             </TextBlock.Text>
                                                         </TextBlock>
-                                                        <TextBlock FontSize="10">
+                                                        <TextBlock FontSize="11">
                                                             <TextBlock.Text>
                                                                 <MultiBinding
                                                                     Converter="{StaticResource BytesToHexConverter}">
@@ -198,7 +197,8 @@
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </Button>
-                                <Button ToolTip="Remove the selected key from keystore" x:Name="RemoveKeyFromKeystore"
+                                <Button IsEnabled="{Binding IsWorking, Converter={StaticResource BoolToEnabledConverter}}"
+                                        ToolTip="Remove the selected key from keystore" x:Name="RemoveKeyFromKeystore"
                                         HorizontalAlignment="Left" Margin="5,0,0,0" Height="46" VerticalAlignment="Top"
                                         Width="46" Cursor="Hand" Style="{DynamicResource MetroCircleButtonStyle}"
                                         Background="#FFFFFFFF">

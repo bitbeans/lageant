@@ -26,7 +26,6 @@ namespace lageant.core.Models
             get { return _keyId; }
             set
             {
-                if (value.Equals(_keyId)) return;
                 _keyId = value;
                 NotifyOfPropertyChange(() => KeyId);
             }

@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lageant.client", "lageant.c
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lageant.client.tests", "lageant.client.tests\lageant.client.tests.csproj", "{04113B99-5AD4-4519-9FBF-BDD9BBCFD586}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleCrypt", "SimpleCrypt\SimpleCrypt.csproj", "{1B6E87FF-BDD7-4B55-9C5E-79C75623F1B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{04113B99-5AD4-4519-9FBF-BDD9BBCFD586}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04113B99-5AD4-4519-9FBF-BDD9BBCFD586}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04113B99-5AD4-4519-9FBF-BDD9BBCFD586}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B6E87FF-BDD7-4B55-9C5E-79C75623F1B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B6E87FF-BDD7-4B55-9C5E-79C75623F1B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B6E87FF-BDD7-4B55-9C5E-79C75623F1B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B6E87FF-BDD7-4B55-9C5E-79C75623F1B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
