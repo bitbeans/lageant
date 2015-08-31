@@ -507,7 +507,8 @@ namespace lageant.ViewModels
                 PrivateKey = keyPair.PrivateKey,
                 PublicKey = keyPair.PublicKey,
                 KeyId = SodiumCore.GetRandomBytes(8),
-                KeySalt = PasswordHash.GenerateSalt()
+                KeySalt = PasswordHash.GenerateSalt(),
+                KeyNonce = PublicKeyBox.GenerateNonce()
             };
             return key;
         }

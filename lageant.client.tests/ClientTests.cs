@@ -25,9 +25,9 @@ namespace lageant.client.tests
         {
             var client = new LageantClient();
             if (!client.Connect()) return;
-            var key = client.Keystore.GetKeyById(StringToByteArray("4022a87de0ff0724"));
+            var key = client.Keystore.GetKeyById(StringToByteArray("817618db3eafb76b"));
 
-            Assert.AreEqual(StringToByteArray("279025e793dea73c0af88cef0e2f0a729b0846087029f1a27f4a63f10b8e2c51"),
+            Assert.AreEqual(StringToByteArray("cb9e100f267e13817df835793148ee4fe98df78a620929b800ea8fdbea80990f"),
                 key.PublicKey);
         }
     }

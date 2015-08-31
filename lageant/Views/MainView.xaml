@@ -23,7 +23,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Background="#198AB328">
-        <tb:TaskbarIcon x:Name="MyNotifyIcon" IconSource="../Images/libsodium.ico" ToolTipText="hello world"
+        <tb:TaskbarIcon x:Name="MyNotifyIcon" IconSource="../Images/libsodium.ico" ToolTipText="Libsodium Authentication Agent"
                         cal:Message.Attach="[Event TrayMouseDoubleClick] = [Action ShowWindow]">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
