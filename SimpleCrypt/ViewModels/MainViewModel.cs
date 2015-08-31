@@ -64,8 +64,7 @@ namespace SimpleCrypt.ViewModels
             MainViewError = string.Empty;
 
             _lageantClient = lageantClient;
-            if (!_lageantClient.Connect()) return;
-            RefreshKeys();
+            RefreshKeys();       
         }
 
         public List<Key> AvailableKeys
@@ -111,7 +110,21 @@ namespace SimpleCrypt.ViewModels
         public void RefreshKeys()
         {
             MainViewError = string.Empty;
-            AvailableKeys = _lageantClient.Keystore.Keys;
+            try
+            {
+                if (_lageantClient.Connect())
+                {
+                    AvailableKeys = _lageantClient.Keystore.Keys;
+                }
+                else
+                {
+                    MainViewError = "Could not connect to keystore";
+                }
+            }
+            catch (Exception)
+            {
+                MainViewError = "Could not connect to keystore";
+            }
         }
 
 
